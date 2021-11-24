@@ -1,0 +1,96 @@
+'use-strict'
+
+const conn = require('../config/db')
+const bcrypt = require('bcrypt')
+const salt = bcrypt.genSaltSync(10)
+const {getMaxPage} = require('./page')
+const tableName = 'users'
+
+exports.registerUser = req => {
+    const body = req.body
+    const pass = bcrypt.hashSync(body.password, salt)
+
+    return new Promise((resolve, reject) => {
+
+        conn.query(`INSERT INTO ${tableName} SET fullname = ?, username = ?, password = ?, email = ?`,
+            [body.fullname, body.username, pass, body.email],
+            (err, result) => {
+                if(!err) resolve(result)
+                else reject(err)
+            })
+    })
+}
+
+exports.loginUser = req => {
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT * FROM ${tableName} WHERE email = ?`, [req.body.email],
+        (err, result) => {
+            if(!err) resolve(result)
+            else reject(err)
+        })
+    })
+}
+
+exports.updateUser = req => {
+    const body = req.body
+    const pass = bcrypt.hashSync(body.password, salt)
+    return new Promise((resolve, reject) => {
+        
+        conn.query(`UPDATE ${tableName} SET username = ?, password = ?, role = ? WHERE id = ?`, [req.body.username, pass, req.body.user_role, req.params.user_id], (err, result) => {
+            if(!err) resolve(result)
+            else reject(err)
+        })
+    })
+}
+
+exports.getUserList = (req, page) => {
+    let sql = 'SELECT id, username, role, created_at, updated_at FROM ${tableName}'
+    return new Promise((resolve, reject) => {
+        getMaxPage(page, null, "tb_users").then(maxPage => {
+            const infoPage = {
+                currentPage: page.page,
+                totalAllUsers: maxPage.totalProduct,
+                maxPage: maxPage.maxPage
+            }
+
+            conn.query(`${sql} LIMIT ? OFFSET ?`, [page.limit, page.offset], (err, data) => {
+                if (!err) resolve({
+                    infoPage,
+                    data
+                })
+                else reject(err)
+            })
+        })
+    })
+}
+
+exports.getUserById = req => {
+    const userId = req.params.user_id || req.body.user_id
+    return new Promise((resolve, reject) => {
+        conn.query('SELECT id, username, role, created_at, updated_at FROM ${tableName} WHERE id = ?', [userId],
+        (err, result) => {
+            if(!err) resolve(result)
+            else reject(err)
+        })
+    })
+}
+
+exports.getUserByEmail = req => {
+    const email = req.params.email || req.body.emial
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT id, username, email, created_at, updated_at FROM ${tableName} WHERE email = ?`, [email],
+        (err, result) => {
+            if(!err) resolve(result)
+            else reject(err)
+        })
+    })
+}
+
+exports.deleteUser = req => {
+    return new Promise((resolve, reject) => {
+        conn.query(`DELETE FROM ${tableName} WHERE id = ?`, [req.params.user_id], (err, result) => {
+            if(!err) resolve(result)
+            else reject(err)
+        })
+    })
+}
