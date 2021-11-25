@@ -1,9 +1,9 @@
 "use-strict"
 
-const model = require("../Models/order")
+const model = require("../models/order")
 const response = require("../utils/response")
-const { pagination } = require("../Models/page")
-const { getProductById } = require("../Models/product")
+const { pagination } = require("../models/page")
+const { getProductById } = require("../models/product")
 
 exports.getOrders = (req, res) => {
   const page = pagination(req)
