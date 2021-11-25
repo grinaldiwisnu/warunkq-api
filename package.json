@@ -1,13 +1,13 @@
 {
-  "name": "point-of-sales-api",
+  "name": "warunkq-api",
   "version": "1.0.0",
-  "description": "Point of Sales API",
+  "description": "WarunkQ API",
   "main": "server.js",
   "scripts": {
     "start": "nodemon server",
     "test": "nodemon server"
   },
-  "author": "Irsyaad Budi Prasetianto",
+  "author": "Grinaldi Wisnu",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.0",
