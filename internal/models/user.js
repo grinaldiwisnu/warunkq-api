@@ -44,7 +44,7 @@ exports.updateUser = req => {
 }
 
 exports.getUserList = (req, page) => {
-    let sql = 'SELECT id, username, role, created_at, updated_at FROM ${tableName}'
+    let sql = `SELECT id, username, role, created_at, updated_at FROM ${tableName}`
     return new Promise((resolve, reject) => {
         getMaxPage(page, null, "tb_users").then(maxPage => {
             const infoPage = {
@@ -67,7 +67,7 @@ exports.getUserList = (req, page) => {
 exports.getUserById = req => {
     const userId = req.params.user_id || req.body.user_id
     return new Promise((resolve, reject) => {
-        conn.query('SELECT id, username, role, created_at, updated_at FROM ${tableName} WHERE id = ?', [userId],
+        conn.query(`SELECT id, username, role, created_at, updated_at FROM ${tableName} WHERE id = ?`, [userId],
         (err, result) => {
             if(!err) resolve(result)
             else reject(err)
