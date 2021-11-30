@@ -67,7 +67,7 @@ exports.getUserList = (req, page) => {
 exports.getUserById = req => {
     const userId = req.params.user_id || req.body.user_id
     return new Promise((resolve, reject) => {
-        conn.query(`SELECT users.id, users.fullname, users.username, users.email, users.created_at, users.updated_at FROM ${tableName} JOIN users_detail ON users_detail.users_id = users.id WHERE users.id = ?`, [userId],
+        conn.query(`SELECT users.id, users.fullname, users.username, users.email, users.created_at, users.updated_at, users_detail.phone_number, users_detail.store_name, users_detail.store_address FROM ${tableName} JOIN users_detail ON users_detail.users_id = users.id WHERE users.id = ?`, [userId],
         (err, result) => {
             if(!err) resolve(result)
             else reject(err)
