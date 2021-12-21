@@ -18,9 +18,12 @@ exports.getOrders = (req, res) => {
 }
 
 exports.newOrder = async (req, res) => {
-  console.log(req.body, "uye")
   if (req.body.user_id == null)
     return response.error(res, "User id can't be empty")
+  if (req.body.order_id == null)
+    return response.error(res, "Order id can't be empty")
+  if (req.body.order_name == null)
+    return response.error(res, "Order name can't be empty")
   if (req.body.total_price == null)
     return response.error(res, "Total price can't be empty")
   if (req.body.detail_order == null)

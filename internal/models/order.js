@@ -4,7 +4,7 @@ const conn = require('../config/db')
 const { getMaxPage } = require('./page')
 const tableName = 'orders'
 
-exports.getOrders = (req, page) => {
+exports.getOrders = (_req, page) => {
     let sql = `SELECT * FROM ${tableName}`
 
     return new Promise((resolve, reject) => {
@@ -28,9 +28,9 @@ exports.getOrders = (req, page) => {
 
 exports.newOrder = async (req, order) => {
     return new Promise((resolve, reject) => {
-        conn.query(`INSERT INTO ${tableName} SET users_id = ?, order_id = ?, total_price = ?, status = ?, discount_amount = ?, discount_total = ?`,
-            [req.body.user_id, order, req.body.total_price, req.body.status, req.body.discount_amount, req.body.discount_total],
-            (err, result) => {
+        conn.query(`INSERT INTO ${tableName} SET users_id = ?, order_id = ?, total_price = ?, status = ?, discount_amount = ?, discount_total = ?, order_name = ?`,
+            [req.body.user_id, order, req.body.total_price, req.body.status, req.body.discount_amount, req.body.discount_total, req.body.order_name],
+            (err, _result) => {
                 if (!err) {
                     const values = req.body.detail_order.map(item => [item.quantity, item.sub_total, order, item.prod_id])
                     conn.query('INSERT INTO orders_detail (quantity, sub_total, orders_id, products_id) VALUES ? ',
@@ -61,7 +61,7 @@ exports.updateQtyProduct = (product, status) => {
     const operator = status == 'success' ? '-' : '+'
     console.log(product)
     
-    product.forEach((item, index) => {
+    product.forEach((item, _index) => {
         sql += `UPDATE ${tableName} SET quantity = quantity ${operator} ${item.quantity} WHERE id = ${item.prod_id}`
     })
 
