@@ -26,13 +26,13 @@ exports.getOrders = (_req, page) => {
     })
 }
 
-exports.newOrder = async (req, order) => {
+exports.newOrder = async (req) => {
     return new Promise((resolve, reject) => {
         conn.query(`INSERT INTO ${tableName} SET users_id = ?, order_id = ?, total_price = ?, status = ?, discount_amount = ?, discount_total = ?, order_name = ?`,
-            [req.body.user_id, order, req.body.total_price, req.body.status, req.body.discount_amount, req.body.discount_total, req.body.order_name],
+            [req.body.user_id, req.body.order_id, req.body.total_price, req.body.status, req.body.discount_amount, req.body.discount_total, req.body.order_name],
             (err, _result) => {
                 if (!err) {
-                    const values = req.body.detail_order.map(item => [item.quantity, item.sub_total, order, item.prod_id])
+                    const values = req.body.detail_order.map(item => [item.quantity, item.sub_total, req.body.order_id, item.prod_id])
                     conn.query('INSERT INTO orders_detail (quantity, sub_total, orders_id, products_id) VALUES ? ',
                         [values],
                         (err, result) => {
@@ -62,7 +62,7 @@ exports.updateQtyProduct = (product, status) => {
     console.log(product)
     
     product.forEach((item, _index) => {
-        sql += `UPDATE ${tableName} SET quantity = quantity ${operator} ${item.quantity} WHERE id = ${item.prod_id}`
+        sql += `UPDATE products SET quantity = quantity ${operator} ${item.quantity} WHERE id = ${item.prod_id}`
     })
 
     return new Promise((resolve, reject) => {
@@ -76,7 +76,7 @@ exports.updateQtyProduct = (product, status) => {
 
 exports.reduceQtyProduct = (product) => {
     return new Promise((resolve, reject) => {
-        conn.query(`UPDATE ${tableName} SET quantity = quantity - ? WHERE id = ?`, [product.quantity, product.prod_id], (err, result) => {
+        conn.query(`UPDATE products SET quantity = quantity - ? WHERE id = ?`, [product.quantity, product.prod_id], (err, result) => {
             if(!err) resolve(result)
             else reject(err)
         })

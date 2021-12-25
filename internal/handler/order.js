@@ -53,7 +53,7 @@ exports.newOrder = async (req, res) => {
   }
 
   model
-    .newOrder(req, orderGenerator())
+    .newOrder(req)
     .then(resultOrder => {
       let status = []
       detailOrder.forEach(async item => {
@@ -84,14 +84,15 @@ exports.getDetailOrderById = (req, res) => {
             const data = result.map(item => ({
               admin_id: item.admin_id,
               order_id: item.order_id,
-              detail_order: resultDetail,
+              order_name: item.order_name,
               total_price: item.total_price,
               discount_amount: item.discount_amount,
               discount_total: item.discount_total,
               status: item.status,
               cancel_reason: item.cancel_reason,
               created_at: item.created_at,
-              update_at: item.update_at
+              update_at: item.update_at,
+              detail_order: resultDetail,
             }))
 
             response.success(res, data)
@@ -143,19 +144,4 @@ exports.updateStatusOrder = (req, res) => {
     .catch(err => {
       response.error(res, err.sqlMessage)
     })
-}
-
-const orderGenerator = () => {
-  const date = new Date()
-  const components = [
-      date.getYear(),
-      date.getMonth(),
-      date.getDate(),
-      date.getHours(),
-      date.getMinutes(),
-      date.getSeconds()
-  ]
-
-  const id = "O-WRQ" + components.join("")
-  return id
 }
