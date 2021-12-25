@@ -158,7 +158,7 @@ exports.updateProduct = req => {
         body.prod_sell_price,
         body.prod_quantity,
         req.params.prod_id,
-        req.params.user_id
+        req.body.user_id
       ],
       (err, result) => {
         if (!err) resolve(result)
