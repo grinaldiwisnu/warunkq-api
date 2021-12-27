@@ -5,8 +5,6 @@ const { getMaxPage } = require('./page')
 const tableName = 'orders'
 
 exports.getOrders = (_req, page) => {
-    let sql = `SELECT * FROM ${tableName}`
-
     return new Promise((resolve, reject) => {
         getMaxPage(page, null, `${tableName}`).then(maxPage => {
             const infoPage = {
@@ -15,7 +13,8 @@ exports.getOrders = (_req, page) => {
                 maxPage: maxPage.maxPage
             }
 
-            conn.query(`${sql} LIMIT ? OFFSET ?`, [page.limit, page.offset], (err, data) => {
+            conn.query(`SELECT * FROM ${tableName} WHERE created_at BETWEEN ? AND ? LIMIT ? OFFSET ?`, [page.startDate, page.endDate, page.limit, page.offset], (err, data) => {
+                console.log(page)
                 if (!err) resolve({
                     infoPage,
                     data

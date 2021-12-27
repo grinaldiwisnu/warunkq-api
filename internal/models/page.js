@@ -6,11 +6,14 @@ exports.pagination = req => {
     const limit = Number(req.query.perpage) || 12
     const page = Number(req.query.page) || 1
     const offset = limit * (page - 1)
-
+    const startDate = req.query.startdate || new Date().toISOString().slice(0, 19).replace('T', ' ')
+    const endDate = req.query.enddate || new Date().toISOString().slice(0, 19).replace('T', ' ');
     return {
         limit,
         offset,
-        page
+        page,
+        startDate,
+        endDate
     }
 }
 
