@@ -1,5 +1,17 @@
 version: '3.3'
 services:
+  api:
+    image: warunk-api:latest
+    build: .
+    networks:
+      - backend
+    ports:
+      - "80:3000"
+  web-cli:
+    image: warunk-api:latest
+    networks:
+      - backend
+    command: sh
   db:
     image: mysql:5.7
     restart: always
@@ -20,6 +32,9 @@ services:
       # Where our data will be persisted
     volumes:
       - my-db:/var/lib/mysql
+networks:
+  backend:
+    driver: bridge
 # Names our volume
 volumes:
   my-db:
