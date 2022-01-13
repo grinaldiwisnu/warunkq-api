@@ -44,7 +44,7 @@ const searchProduct = (req, sql) => {
 
 exports.getProducts = (req, page) => {
   let sql = `SELECT product.id, product.name as product_name, product.description, product.image,
-            category.name as category, product.price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
+            category.name as category, product.price,  product.sell_price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
             categories as category WHERE product.categories_id = category.id `
 
   const query = searchProduct(req, sql)
@@ -98,7 +98,7 @@ exports.getProductByName = req => {
 
     conn.query(
       `SELECT product.id, product.name as product_name, product.description, product.image,
-        category.name as category, product.price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
+        category.name as category, product.price, product.sell_price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
         categories as category WHERE product.categories_id = category.id AND product.name = ?`,
       [prodName],
       (err, result) => {
@@ -112,7 +112,7 @@ exports.getProductByName = req => {
 exports.getProductByCategoryId = req => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT product.id, product.name as product_name, product.description, product.image,
-        category.name as category, product.price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
+        category.name as category, product.price, product.sell_price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
         categories as category WHERE product.categories_id = category.id AND category.id = ?`), [req.body.prod_categories_id],
         (err, result) => {
             if(!err) resolve(result)
