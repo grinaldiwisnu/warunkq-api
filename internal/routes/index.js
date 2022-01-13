@@ -3,6 +3,7 @@
 const express = require('express')
 const product = require('./product')
 const category = require('./category')
+const customer = require('./customer')
 const order = require('./order')
 const user = require('./user')
 const {validateUser} = require('../utils/middleware')
@@ -19,6 +20,7 @@ Router.get('/', (req, res) => {
 
 Router.use('/product', validateUser, product)
 Router.use('/category', validateUser, category)
+Router.use('/customer', validateUser, customer)
 Router.use('/order', validateUser, order)
 Router.use('/user', user)
 

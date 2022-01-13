@@ -27,8 +27,8 @@ exports.getOrders = (_req, page) => {
 
 exports.newOrder = async (req) => {
     return new Promise((resolve, reject) => {
-        conn.query(`INSERT INTO ${tableName} SET users_id = ?, order_id = ?, total_price = ?, status = ?, discount_amount = ?, discount_total = ?, order_name = ?`,
-            [req.body.user_id, req.body.order_id, req.body.total_price, req.body.status, req.body.discount_amount, req.body.discount_total, req.body.order_name],
+        conn.query(`INSERT INTO ${tableName} SET users_id = ?, order_id = ?, phone_number = ?, total_price = ?, status = ?, discount_amount = ?, discount_total = ?, order_name = ?`,
+            [req.body.user_id, req.body.order_id, req.body.phone_number, req.body.total_price, req.body.status, req.body.discount_amount, req.body.discount_total, req.body.order_name],
             (err, _result) => {
                 if (!err) {
                     const values = req.body.detail_order.map(item => [item.quantity, item.sub_total, req.body.order_id, item.prod_id])
