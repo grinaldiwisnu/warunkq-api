@@ -1,17 +1,17 @@
 version: '3.3'
 services:
-  api:
-    image: warunk-api:latest
-    build: .
-    networks:
-      - backend
-    ports:
-      - "80:3000"
-  web-cli:
-    image: warunk-api:latest
-    networks:
-      - backend
-    command: sh
+  # api:
+  #   image: warunk-api:latest
+  #   build: .
+  #   networks:
+  #     - backend
+  #   ports:
+  #     - "80:3000"
+  # web-cli:
+  #   image: warunk-api:latest
+  #   networks:
+  #     - backend
+  #   command: sh
   db:
     image: mysql:5.7
     restart: always
@@ -23,6 +23,8 @@ services:
       MYSQL_PASSWORD: 'password'
       # Password for root access
       MYSQL_ROOT_PASSWORD: 'password'
+      TZ: 'Asia/Jakarta'
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--default-time-zone=+07:00']
     ports:
       # <Port exposed> : < MySQL Port running inside container>
       - '3306:3306'
@@ -32,6 +34,18 @@ services:
       # Where our data will be persisted
     volumes:
       - my-db:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8081:80
 networks:
   backend:
     driver: bridge

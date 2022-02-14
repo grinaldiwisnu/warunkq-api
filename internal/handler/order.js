@@ -145,3 +145,24 @@ exports.updateStatusOrder = (req, res) => {
       response.error(res, err.sqlMessage)
     })
 }
+
+exports.getMonthlySummary = (req, res) => {
+  model
+      .getMonthlySummary(req)
+      .then(result => {
+        response.success(res, result)
+      })
+      .catch(err => {
+        response.error(res, err)
+      })
+}
+
+exports.getTopSellingItemMonthly = (req, res) => {
+  model.getTopSellingItemMonthly(req)
+  .then(result => {
+    response.success(res, result)
+  })
+  .catch(err => {
+    response.error(res, err)
+  })
+}

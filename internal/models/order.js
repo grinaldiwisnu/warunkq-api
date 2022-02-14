@@ -4,7 +4,7 @@ const conn = require('../config/db')
 const { getMaxPage } = require('./page')
 const tableName = 'orders'
 
-exports.getOrders = (_req, page) => {
+exports.getOrders = (req, page) => {
     return new Promise((resolve, reject) => {
         getMaxPage(page, null, `${tableName}`).then(maxPage => {
             const infoPage = {
@@ -13,7 +13,7 @@ exports.getOrders = (_req, page) => {
                 maxPage: maxPage.maxPage
             }
 
-            conn.query(`SELECT * FROM ${tableName} WHERE created_at BETWEEN ? AND ? LIMIT ? OFFSET ?`, [page.startDate, page.endDate, page.limit, page.offset], (err, data) => {
+            conn.query(`SELECT * FROM ${tableName} WHERE created_at BETWEEN ? AND ? AND users_id = ? LIMIT ? OFFSET ?`, [page.startDate, page.endDate, req.body.user_id, page.limit, page.offset], (err, data) => {
                 console.log(page)
                 if (!err) resolve({
                     infoPage,
@@ -100,5 +100,29 @@ exports.getDetailOrderById = orderId => {
                 if (!err) resolve(result)
                 else reject(err)
             })
+    })
+}
+
+exports.getMonthlySummary = (req) => {
+    const startDate = req.query.start_date
+    const endDate = req.query.end_date
+    return new Promise((resolve, reject) => {
+        conn.query(`CALL find_summary(?, ?, ?)`, [startDate, endDate, req.body.user_id],
+            (err, result) => {
+                if (!err) resolve(result[0])
+                else reject(err)
+            })
+    })
+}
+
+exports.getTopSellingItemMonthly = (req) => {
+    const startDate = req.query.start_date
+    const endDate = req.query.end_date
+    return new Promise((resolve, reject) => {
+        conn.query(`SELECT od.products_id, p.name, SUM(od.quantity) AS selling, SUM(od.sub_total) AS total FROM orders o JOIN orders_detail od ON od.orders_id = o.order_id JOIN products p ON p.id = od.products_id WHERE o.created_at BETWEEN ? AND ? AND o.users_id = ? GROUP BY p.name, od.products_id ORDER BY SUM(od.quantity) DESC LIMIT 5`, [startDate, endDate, req.body.user_id],
+        (err, result) => {
+            if (!err) resolve(result)
+            else reject(err)
+        })
     })
 }
