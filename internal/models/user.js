@@ -26,7 +26,7 @@ exports.insertDetailUser = req => {
 
     return new Promise((resolve, reject) => {
         conn.query(`INSERT INTO users_detail SET phone_number = ?, store_name = ?, store_address = ?, users_id = ?`,
-            [body.phone, body.store_name, pass, body.store_address, body.users_id],
+            [body.phone, body.store_name, body.store_address, body.users_id],
             (err, result) => {
                 if(!err) resolve(result)
                 else reject(err)
@@ -39,7 +39,7 @@ exports.updateDetailUser = req => {
 
     return new Promise((resolve, reject) => {
         conn.query(`UPDATE users_detail SET phone_number = ?, store_name = ?, store_address = ? WHERE users_id = ?`,
-            [body.phone, body.store_name, pass, body.store_address, req.params.user_id],
+            [body.phone, body.store_name, body.store_address, req.params.user_id],
             (err, result) => {
                 if(!err) resolve(result)
                 else reject(err)
@@ -60,7 +60,7 @@ exports.loginUser = req => {
 exports.updateUser = req => {
     return new Promise((resolve, reject) => {
         
-        conn.query(`UPDATE ${tableName} SET fullname = ?, email = ? WHERE id = ?`, [req.body.fullname, pass, req.body.email, req.params.user_id], (err, result) => {
+        conn.query(`UPDATE ${tableName} SET fullname = ?, email = ? WHERE id = ?`, [req.body.fullname, req.body.email, req.params.user_id], (err, result) => {
             if(!err) resolve(result)
             else reject(err)
         })
@@ -100,7 +100,7 @@ exports.getUserById = req => {
 }
 
 exports.getUserByEmail = req => {
-    const email = req.params.email || req.body.emial
+    const email = req.params.email || req.body.email
     return new Promise((resolve, reject) => {
         conn.query(`SELECT id, username, email, created_at, updated_at FROM ${tableName} WHERE email = ?`, [email],
         (err, result) => {

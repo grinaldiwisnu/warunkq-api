@@ -27,7 +27,7 @@ exports.registerUser = (req, res) => {
     .getUserByEmail(req)
     .then((result) => {
       if (result.length != 0)
-        response.error(
+        return response.error(
           res,
           "email has been taken, please change your email"
         )
