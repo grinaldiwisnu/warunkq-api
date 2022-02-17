@@ -113,7 +113,13 @@ exports.updateUser = (req, res) => {
       model
         .updateUser(req)
         .then((result) => {
-          response.success(res, "Updated user successfully")
+          model.updateDetailUser(req)
+          .then(result => {
+            response.success(res, "Updated user successfully")
+          })
+          .catch(err => {
+            response.error(res, err)
+          })
         })
         .catch((err) => {
           response.error(res, err)

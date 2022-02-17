@@ -61,17 +61,8 @@ exports.updateUser = req => {
     return new Promise((resolve, reject) => {
         
         conn.query(`UPDATE ${tableName} SET fullname = ?, email = ? WHERE id = ?`, [req.body.fullname, pass, req.body.email, req.params.user_id], (err, result) => {
-            if(!err) {
-                this.updateDetailUser(req)
-                .then(result => {
-                    resolve(result)
-                })
-                .catch(err => {
-                    reject(err)
-                })
-            } else {
-                reject(err)
-            }
+            if(!err) resolve(result)
+            else reject(err)
         })
     })
 }
