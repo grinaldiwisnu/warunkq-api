@@ -147,10 +147,19 @@ exports.updateStatusOrder = (req, res) => {
 }
 
 exports.getMonthlySummary = (req, res) => {
+  let output = {}
   model
       .getMonthlySummary(req)
       .then(result => {
-        response.success(res, result)
+        output.data = result
+        model.getReportRevenue(req)
+        .then(result => {
+          output.summary = result
+          response.success(res, output)
+        })
+        .catch(err => {
+          response.error(res, err)
+        })
       })
       .catch(err => {
         response.error(res, err)
