@@ -21,11 +21,24 @@ exports.registerUser = req => {
     })
 }
 
-exports.fillDetailUser = req => {
+exports.insertDetailUser = req => {
     const body = req.body
 
     return new Promise((resolve, reject) => {
-        conn.query(`INSERT INTO users_detail SET phone_number = ?, store_name = ?, store_address = ?, users_id`,
+        conn.query(`INSERT INTO users_detail SET phone_number = ?, store_name = ?, store_address = ?, users_id = ?`,
+            [body.phone, body.store_name, pass, body.store_address, body.users_id],
+            (err, result) => {
+                if(!err) resolve(result)
+                else reject(err)
+            })
+    })
+}
+
+exports.updateDetailUser = req => {
+    const body = req.body
+
+    return new Promise((resolve, reject) => {
+        conn.query(`UPDATE users_detail SET phone_number = ?, store_name = ?, store_address = ? WHERE users_id = ?`,
             [body.phone, body.store_name, pass, body.store_address, body.users_id],
             (err, result) => {
                 if(!err) resolve(result)
@@ -49,7 +62,7 @@ exports.updateUser = req => {
         
         conn.query(`UPDATE ${tableName} SET fullname = ?, email = ? WHERE id = ?`, [req.body.fullname, pass, req.body.email, req.params.users_id], (err, result) => {
             if(!err) {
-                this.fillDetailUser(req)
+                this.updateDetailUser(req)
                 .then(result => {
                     resolve(result)
                 })

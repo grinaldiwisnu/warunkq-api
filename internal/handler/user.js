@@ -35,7 +35,7 @@ exports.registerUser = (req, res) => {
         .registerUser(req)
         .then((result) => {
           req.body.users_id = result.insertId
-          model.fillDetailUser(req)
+          model.insertDetailUser(req)
           .then(result => {
             response.success(res, "User created successfully")
           })
