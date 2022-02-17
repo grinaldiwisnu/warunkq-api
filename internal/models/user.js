@@ -21,6 +21,19 @@ exports.registerUser = req => {
     })
 }
 
+exports.fillDetailUser = req => {
+    const body = req.body
+
+    return new Promise((resolve, reject) => {
+        conn.query(`INSERT INTO users_detail SET phone_number = ?, store_name = ?, store_address = ?, users_id`,
+            [body.phone, body.store_name, pass, body.store_address, body.users_id],
+            (err, result) => {
+                if(!err) resolve(result)
+                else reject(err)
+            })
+    })
+}
+
 exports.loginUser = req => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT * FROM ${tableName} WHERE email = ?`, [req.body.email],
@@ -32,13 +45,20 @@ exports.loginUser = req => {
 }
 
 exports.updateUser = req => {
-    const body = req.body
-    const pass = bcrypt.hashSync(body.password, salt)
     return new Promise((resolve, reject) => {
         
-        conn.query(`UPDATE ${tableName} SET username = ?, password = ?, role = ? WHERE id = ?`, [req.body.username, pass, req.body.user_role, req.params.user_id], (err, result) => {
-            if(!err) resolve(result)
-            else reject(err)
+        conn.query(`UPDATE ${tableName} SET fullname = ?, email = ? WHERE id = ?`, [req.body.fullname, pass, req.body.email, req.params.users_id], (err, result) => {
+            if(!err) {
+                this.fillDetailUser(req)
+                .then(result => {
+                    resolve(result)
+                })
+                .catch(err => {
+                    reject(err)
+                })
+            } else {
+                reject(err)
+            }
         })
     })
 }

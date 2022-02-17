@@ -34,7 +34,14 @@ exports.registerUser = (req, res) => {
       model
         .registerUser(req)
         .then((result) => {
-          response.success(res, "User created successfully")
+          req.body.users_id = result.insertId
+          model.fillDetailUser(req)
+          .then(result => {
+            response.success(res, "User created successfully")
+          })
+          .catch(err => {
+            response.error(res, err)
+          })
         })
         .catch((err) => {
           response.error(res, err)
