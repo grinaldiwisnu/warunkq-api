@@ -39,7 +39,7 @@ exports.updateDetailUser = req => {
 
     return new Promise((resolve, reject) => {
         conn.query(`UPDATE users_detail SET phone_number = ?, store_name = ?, store_address = ? WHERE users_id = ?`,
-            [body.phone, body.store_name, pass, body.store_address, body.users_id],
+            [body.phone, body.store_name, pass, body.store_address, req.params.user_id],
             (err, result) => {
                 if(!err) resolve(result)
                 else reject(err)
@@ -60,7 +60,7 @@ exports.loginUser = req => {
 exports.updateUser = req => {
     return new Promise((resolve, reject) => {
         
-        conn.query(`UPDATE ${tableName} SET fullname = ?, email = ? WHERE id = ?`, [req.body.fullname, pass, req.body.email, req.params.users_id], (err, result) => {
+        conn.query(`UPDATE ${tableName} SET fullname = ?, email = ? WHERE id = ?`, [req.body.fullname, pass, req.body.email, req.params.user_id], (err, result) => {
             if(!err) {
                 this.updateDetailUser(req)
                 .then(result => {
@@ -79,7 +79,7 @@ exports.updateUser = req => {
 exports.getUserList = (req, page) => {
     let sql = `SELECT id, username, role, created_at, updated_at FROM ${tableName}`
     return new Promise((resolve, reject) => {
-        getMaxPage(page, null, "tb_users").then(maxPage => {
+        getMaxPage(page, null, tableName).then(maxPage => {
             const infoPage = {
                 currentPage: page.page,
                 totalAllUsers: maxPage.totalProduct,
