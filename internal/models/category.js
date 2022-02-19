@@ -5,7 +5,7 @@ const { getMaxPage } = require("./page");
 const tableName = 'categories'
 
 exports.getCategories = (req, page) => {
-  const sql = `SELECT * FROM ${tableName}`;
+  const sql = `SELECT * FROM ${tableName} WHERE users_id = ?`;
   return new Promise((resolve, reject) => {
     getMaxPage(page, null, `${tableName}`)
       .then(maxPage => {
@@ -17,7 +17,7 @@ exports.getCategories = (req, page) => {
 
         conn.query(
           `${sql} LIMIT ? OFFSET ?`,
-          [page.limit, page.offset],
+          [req.body.user_id, page.limit, page.offset],
           (err, data) => {
             if (!err) resolve({ infoPage, data });
             else reject(err);
@@ -35,8 +35,8 @@ exports.getCategoryById = (req, id) => {
     const categoryId = req.params.category_id || req.body.category_id || id;
 
     conn.query(
-      `SELECT * FROM ${tableName} WHERE id = ?`,
-      [categoryId],
+      `SELECT * FROM ${tableName} WHERE id = ? AND users_id = ?`,
+      [categoryId, req.body.user_id],
       (err, result) => {
         if (!err) resolve(result);
         else reject(err);
@@ -77,8 +77,8 @@ exports.newCategory = req => {
 exports.updateCategory = req => {
   return new Promise((resolve, reject) => {
     conn.query(
-      `UPDATE ${tableName} SET name = ?, description = ? WHERE id = ?`,
-      [req.body.category_name, req.body.category_description, req.params.category_id],
+      `UPDATE ${tableName} SET name = ?, description = ? WHERE id = ? AND users_id = ?`,
+      [req.body.category_name, req.body.category_description, req.params.category_id, req.body.user_id],
       (err, result) => {
         if (!err) resolve(result);
         else reject(err);
@@ -101,8 +101,8 @@ exports.deleteCategory = req => {
     const categoryId = req.params.category_id;
 
     conn.query(
-      `DELETE FROM ${tableName} WHERE id = ?`,
-      [categoryId],
+      `DELETE FROM ${tableName} WHERE id = ? AND users_id = ?`,
+      [categoryId, req.body.user_id],
       (err, result) => {
         if (!err) resolve(result);
         else reject(err);

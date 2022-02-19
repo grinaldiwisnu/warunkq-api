@@ -45,7 +45,7 @@ const searchProduct = (req, sql) => {
 exports.getProducts = (req, page) => {
   let sql = `SELECT product.id, product.name as product_name, product.description, product.image,
             category.name as category, product.price,  product.sell_price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
-            categories as category WHERE product.categories_id = category.id `
+            categories as category WHERE product.categories_id = category.id AND product.users_id = ?`
 
   const query = searchProduct(req, sql)
   sql = sortBy(req, query.sql)
@@ -62,7 +62,7 @@ exports.getProducts = (req, page) => {
         conn.query(
           `${sql} LIMIT ? OFFSET ?`,
           query.keyword == null
-            ? [page.limit, page.offset]
+            ? [req.body.user_id, page.limit, page.offset]
             : ["%" + query.keyword + "%", page.limit, page.offset],
           (err, data) => {
             if (!err)
@@ -83,9 +83,9 @@ exports.getProductById = (req, orderProdId) => {
     const prodId = req.params.prod_id || orderProdId || req.body.prod_id
     const sql = `SELECT product.id, product.name as product_name, product.description, product.image,
         category.name as category, product.price, product.sell_price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
-        categories as category WHERE product.categories_id = category.id AND product.id IN (?)`
+        categories as category WHERE product.categories_id = category.id AND product.id IN (?) AND product.users_id = ?`
 
-    conn.query(sql, [prodId], (err, result) => {
+    conn.query(sql, [prodId, req.body.user_id], (err, result) => {
       if (!err) resolve(result)
       else reject(err)
     })
@@ -99,8 +99,8 @@ exports.getProductByName = req => {
     conn.query(
       `SELECT product.id, product.name as product_name, product.description, product.image,
         category.name as category, product.price, product.sell_price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
-        categories as category WHERE product.categories_id = category.id AND product.name = ?`,
-      [prodName],
+        categories as category WHERE product.categories_id = category.id AND product.name = ? AND product.users_id = ?`,
+      [prodName, req.body.user_id],
       (err, result) => {
         if (!err) resolve(result)
         else reject(err)
@@ -113,7 +113,7 @@ exports.getProductByCategoryId = req => {
     return new Promise((resolve, reject) => {
         conn.query(`SELECT product.id, product.name as product_name, product.description, product.image,
         category.name as category, product.price, product.sell_price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
-        categories as category WHERE product.categories_id = category.id AND category.id = ?`), [req.body.prod_categories_id],
+        categories as category WHERE product.categories_id = category.id AND category.id = ? AND product.users_id = ?`), [req.query.prod_categories_id, req.body.user_id],
         (err, result) => {
             if(!err) resolve(result)
             else reject(err)
