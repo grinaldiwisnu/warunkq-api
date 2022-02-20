@@ -61,7 +61,7 @@ exports.updateQtyProduct = (product, status) => {
     console.log(product)
     
     product.forEach((item, _index) => {
-        sql += `UPDATE products SET quantity = quantity ${operator} ${item.quantity} WHERE id = ${item.prod_id}`
+        sql += ` UPDATE products SET quantity = quantity ${operator} ${item.quantity} WHERE id = ${item.prod_id}`
     })
 
     return new Promise((resolve, reject) => {

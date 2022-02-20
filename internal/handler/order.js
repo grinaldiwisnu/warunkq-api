@@ -58,7 +58,7 @@ exports.newOrder = async (req, res) => {
       let status = []
       detailOrder.forEach(async item => {
         await model
-          .reduceQtyProduct(detailOrder)
+          .reduceQtyProduct(item)
           .then(result => status.push(true))
           .catch(err => status.push(false))
       })
