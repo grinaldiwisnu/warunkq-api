@@ -129,7 +129,7 @@ exports.newProduct = req => {
       [
         body.prod_name,
         body.prod_desc,
-        body.prod_image,
+        body.cloud_image,
         body.prod_categories_id,
         body.user_id,
         body.prod_price,
@@ -152,7 +152,7 @@ exports.updateProduct = req => {
       [
         body.prod_name,
         body.prod_desc,
-        body.prod_image,
+        body.cloud_image,
         body.prod_categories_id,
         body.prod_price,
         body.prod_sell_price,

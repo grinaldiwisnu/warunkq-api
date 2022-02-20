@@ -15,16 +15,16 @@ const nodeEnv = 'Development'
 
 server.use(cors())
 
-server.listen(port, () => {
-    console.log(`Server is running with port ${port} in ${nodeEnv}`)
-})
-
 server.use(logger('dev'))
 server.use(bodyParser.json())
 server.use(bodyParser.urlencoded({
-    extended:false
+    extended:true
 }))
 
 server.use('/', Router)
+
+server.listen(port, () => {
+    console.log(`Server is running with port ${port} in ${nodeEnv}`)
+})
 
 module.exports = server

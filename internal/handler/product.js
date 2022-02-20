@@ -4,6 +4,8 @@ const model = require("../models/product")
 const response = require("../utils/response")
 const { getCategoryById } = require("../models/category")
 const { pagination } = require("../models/page")
+const cloudinary = require('../utils/cloudinary')
+
 
 exports.getProducts = (req, res) => {
   const page = pagination(req)
@@ -56,6 +58,19 @@ exports.newProduct = (req, res) => {
         .then(resultCategory => {
           if (resultCategory.length == 0)
             return response.error(res, "Category Id Not Found")
+
+          let { prod_image } = req.files || {}
+
+          if (prod_image) {
+            cloudinary.upload(prod_image, req.body.name)
+            .then(result => {
+              req.body.image = result
+            })
+            .catch(err => {
+              response.error(res, err)
+            })
+          }
+
           model
             .newProduct(req)
             .then(resultInsert => {
@@ -63,8 +78,10 @@ exports.newProduct = (req, res) => {
                 .getProductById(req, resultInsert.insertId)
                 .then(result => response.success(res, result))
                 .catch(err => response.error(res, err))
-            })
-            .catch(err => response.error(res, err))
+          })
+          .catch(err => {
+            response.error(res, err)
+          })
         })
         .catch(err => response.error(res, err))
     })
@@ -89,11 +106,16 @@ exports.updateProduct = (req, res) => {
   if (req.body.prod_quantity <= 0)
     return response.error(res, "Quantity cannot be below 0")
 
+  let originProduct = {}
+
   model
     .getProductById(req)
     .then(resultId => {
       if (resultId.length === 0)
         return response.error(res, "Product not found")
+      
+      originProduct = resultId[0]
+
       model
         .getProductByName(req)
         .then(resultName => {
@@ -106,19 +128,53 @@ exports.updateProduct = (req, res) => {
             .then(resultCategory => {
               if (resultCategory.length === 0)
                 return response.error(res, "Category Id Not Found")
-              model
-                .updateProduct(req)
-                .then(result => {
+              
+                const file = req.file || {}
+                if (file.fieldname) {
+                  cloudinary.upload(file, req.body.prod_name)
+                  .then(result => {
+                    req.body.cloud_image = result.secure_url
+                    model
+                    .updateProduct(req)
+                    .then(result => {
+                      model
+                        .getProductById(req)
+                        .then(result => response.success(res, result))
+                        .catch(err => {
+                          response.error(res, err)
+                        })
+                    })
+                    .catch(err => {
+                      response.error(res, err)
+                    })
+                  })
+                  .catch(err => {
+                    response.error(res, err)
+                  })
+                } else {
+                  req.body.cloud_image = originProduct.image
                   model
-                    .getProductById(req)
-                    .then(result => response.success(res, result))
-                    .catch(err => response.error(res, err))
-                })
-                .catch(err => response.error(res, err))
+                  .updateProduct(req)
+                  .then(result => {
+                    model
+                      .getProductById(req)
+                      .then(result => response.success(res, result))
+                      .catch(err => {
+                        response.error(res, err)
+                      })
+                  })
+                  .catch(err => {
+                    response.error(res, err)
+                  })
+                }
             })
-            .catch(err => response.error(res, err))
+            .catch(err => {
+              response.error(res, err)
+            })
         })
-        .catch(err => response.error(res, err))
+        .catch(err => {
+          response.error(res, err)
+        })
     })
     .catch(err => response.error(res, err))
 }
