@@ -2,6 +2,7 @@
 
 const model = require("../models/order")
 const user = require("../models/user")
+const qr = require("qrcode")
 
 
 exports.getReceipt = async (req, res) => {
@@ -27,8 +28,11 @@ exports.getReceipt = async (req, res) => {
       }))
 
       detailUser = await user.getUserById(req, order[0].users_id)
-      console.log(detailUser)
-      res.render('pages/receipt', { user: detailUser[0], order: data })
+      qr.toDataURL(`${req.protocol}://${req.get('host')}${req.originalUrl}`, (err, src) => {
+        if (err) res.send("Error occured");
+
+        res.render('pages/receipt', { user: detailUser[0], order: data, src: src })
+      })
     } else {
       res.render('pages/error')
     }
