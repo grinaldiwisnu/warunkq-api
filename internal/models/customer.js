@@ -65,7 +65,7 @@ exports.newCustomer = req => {
   return new Promise((resolve, reject) => {
     conn.query(
       `INSERT INTO ${tableName} SET name = ?, phone = ?, users_id = ?`,
-      [req.body.customer_phone, req.body.customer_phone, req.body.user_id],
+      [req.body.customer_name, req.body.customer_phone, req.body.user_id],
       (err, result) => {
         if (!err) resolve(result);
         else reject(err);
