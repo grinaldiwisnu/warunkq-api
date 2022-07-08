@@ -81,7 +81,7 @@ exports.getProducts = (req, page) => {
 exports.getProductById = (req, orderProdId) => {
   return new Promise((resolve, reject) => {
     const prodId = req.params.prod_id || orderProdId || req.body.prod_id
-    const sql = `SELECT product.id, product.name as product_name, product.description, product.image,
+    const sql = `SELECT product.id, product.name as product_name, product.description, product.image, category.id as categories_id,
         category.name as category, product.price, product.sell_price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
         categories as category WHERE product.categories_id = category.id AND product.id IN (?) AND product.users_id = ?`
 
@@ -97,7 +97,7 @@ exports.getProductByName = req => {
     const prodName = req.body.prod_name || req.params.prod_name
 
     conn.query(
-      `SELECT product.id, product.name as product_name, product.description, product.image,
+      `SELECT product.id, product.name as product_name, product.description, product.image, category.id as categories_id,
         category.name as category, product.price, product.sell_price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
         categories as category WHERE product.categories_id = category.id AND product.name = ? AND product.users_id = ?`,
       [prodName, req.body.user_id],
@@ -111,7 +111,7 @@ exports.getProductByName = req => {
 
 exports.getProductByCategoryId = req => {
     return new Promise((resolve, reject) => {
-        conn.query(`SELECT product.id, product.name as product_name, product.description, product.image,
+        conn.query(`SELECT product.id, product.name as product_name, product.description, product.image, category.id as categories_id,
         category.name as category, product.price, product.sell_price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
         categories as category WHERE product.categories_id = category.id AND category.id = ? AND product.users_id = ?`), [req.query.prod_categories_id, req.body.user_id],
         (err, result) => {
