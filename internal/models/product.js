@@ -43,7 +43,7 @@ const searchProduct = (req, sql) => {
 }
 
 exports.getProducts = (req, page) => {
-  let sql = `SELECT product.id, product.name as product_name, product.description, product.image,
+  let sql = `SELECT product.id, product.name as product_name, product.description, product.image, category.id as categories_id,
             category.name as category, product.price,  product.sell_price, product.quantity, product.created_at, product.updated_at FROM ${tableName} as product, 
             categories as category WHERE product.categories_id = category.id AND product.users_id = ? `
 
