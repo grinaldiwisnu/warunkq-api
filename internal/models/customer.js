@@ -5,7 +5,7 @@ const { getMaxPage } = require("./page");
 const tableName = 'customer'
 
 exports.getCustomers = (req, page) => {
-  const sql = `SELECT * FROM ${tableName}`;
+  const sql = `SELECT * FROM ${tableName} WHERE users_id = ?`;
   return new Promise((resolve, reject) => {
     getMaxPage(page, null, `${tableName}`)
       .then(maxPage => {
@@ -17,7 +17,7 @@ exports.getCustomers = (req, page) => {
 
         conn.query(
           `${sql} LIMIT ? OFFSET ?`,
-          [page.limit, page.offset],
+          [req.body.user_id, page.limit, page.offset],
           (err, data) => {
             if (!err) resolve({ infoPage, data });
             else reject(err);
