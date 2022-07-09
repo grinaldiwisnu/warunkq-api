@@ -119,7 +119,7 @@ exports.getReportRevenue = (req) => {
     const startDate = req.query.start_date
     const endDate = req.query.end_date
     return new Promise((resolve, reject) => {
-        conn.query(`SELECT SUM(production_price) AS HPP, SUM(total_price) AS TOTAL, SUM(discount_total) AS DISCOUNT, SUM(quantity) AS PRODUCT FROM orders JOIN orders_detail ON orders.order_id = orders_detail.orders_id WHERE orders.created_at BETWEEN ? AND ? AND orders.users_id = ?`, [startDate, endDate, req.body.user_id],
+        conn.query(`SELECT SUM(production_price) AS HPP, SUM(orders_detail.sub_total) AS TOTAL, COUNT(DISTINCT orders.id) AS DISCOUNT, SUM(quantity) AS PRODUCT FROM orders RIGHT JOIN orders_detail ON orders.order_id = orders_detail.orders_id WHERE orders.created_at BETWEEN ? AND ? AND orders.users_id = ?`, [startDate, endDate, req.body.user_id],
             (err, result) => {
                 if (!err) resolve(result)
                 else reject(err)
